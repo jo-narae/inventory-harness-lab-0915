@@ -8,18 +8,17 @@
 
 ## 라우팅
 
-| 질문 유형 | 1차 | 2차 (판단 안 될 때) | 3차 |
-|---|---|---|---|
-| 충돌·권한 — "이거 고쳐도 돼?", 문서끼리 다름 | SSOT §0 | — (넓히지 않고 `NEEDS_HUMAN` 선언) | — |
-| 기능 요구·범위 — "이 기능 해야 해?", "범위 밖이야?" | SSOT §1 | `docs/01-requirements.md` §3 해당 F · §6 | `docs/03-scenarios.md` 해당 S |
-| 재고 도메인 규칙 — 로트, FEFO/LEFO, 사유, 팝업 정산, 폐기, 취소 | SSOT §1 · §2 | `01-requirements.md` §2 · F5-1 · F7 / `06-architecture.md` §4 | `src/lib/stock.ts` · `fefo.ts` · `popup.ts` |
-| 구조·기술 선택·데이터 흐름·인증 | SSOT §2 (원문 정정 포함) | `docs/06-architecture.md` 해당 절 (§1 스택 · §3 모델 · §5 흐름 · §6 인증 · §8 동시성) | `prisma/schema.prisma`, `src/` |
-| 검증·테스트·완료 기준 | SSOT §3 | `01-requirements.md` §7 · `06-architecture.md` §9 · `docs/07-plan.md` §2 | `tests/`, `scripts/verify-*.ts` |
-| 구현 절차·다음 할 일 | SSOT §4 | `docs/07-plan.md` 해당 M · `docs/HANDOVER.md` §2 · §4 | 관련 `src/` |
-| UI·디자인·접근성 | `docs/05-design.md` 해당 절 | `mockups/final.html` · `03-scenarios.md` §6 (설계 원칙) | `src/components/` |
-| 사용자·시나리오 | `docs/03-scenarios.md` 해당 S | `docs/02-personas.md` | — |
-| 실행·명령어·환경 설정 | `README.md` | `package.json` · `.env.example` | — |
-| Next.js 16 API 사용법 | 아래 Next.js 블록 → `node_modules/next/dist/docs/` 해당 가이드 | — | — |
+| 질문 유형                                        | 1차                                                    | 2차 (판단 안 될 때)                                                                               | 3차                                                                                                                                                                          |
+| -------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 충돌·권한 — "이거 고쳐도 돼?", 문서끼리 다름                 | SSOT §0                                               | — (넓히지 않고 `NEEDS_HUMAN` 선언)                                                                 | —                                                                                                                                                                           |
+| 기능 요구·범위 — "이 기능 해야 해?", "범위 밖이야?"           | SSOT §1                                               | `docs/01-requirements.md` §3 해당 F · §6                                                      | `docs/03-scenarios.md` 해당 S                                                                                                                                                 |
+| 재고 도메인 규칙 — 로트, FEFO/LEFO, 사유, 팝업 정산, 폐기, 취소 | SSOT §1 · §2                                          | `01-requirements.md` §2 · F5-1 · F7 / `06-architecture.md` §4                               | `src/lib/stock.ts` · `fefo.ts` · `popup.ts`                                                                                                                                 |
+| 구조·기술 선택·데이터 흐름·인증                           | SSOT §2 (원문 정정 포함)                                    | `docs/06-architecture.md` 해당 절 (§1 스택 · §3 모델 · §5 흐름 · §6 인증 · §8 동시성)                     | `prisma/schema.prisma`, `src/`                                                                                                                                              |
+| 검증·테스트·완료 기준                                 | SSOT §3                                               | `docs/harness/02-verification.md` 해당 절 (§2 파이프라인 · §3 아키텍처 규칙 B1~B6 · §4 알려진 빈틈 · §5 예정·미정) | `01-requirements.md` §7 · `06-architecture.md` §9 / `tests/` · `scripts/check-architecture.ts` · `scripts/prepare-verify.ts` · `scripts/verify-*.ts` |
+| UI·디자인·접근성                                   | `docs/05-design.md` 해당 절                              | `mockups/final.html` · `03-scenarios.md` §6 (설계 원칙)                                         | `src/components/`                                                                                                                                                           |
+| 사용자·시나리오                                     | `docs/03-scenarios.md` 해당 S                           | `docs/02-personas.md`                                                                       | —                                                                                                                                                                           |
+| 실행·명령어·환경 설정                                 | `README.md`                                           | `package.json` · `.env.example`                                                             | —                                                                                                                                                                           |
+| Next.js 16 API 사용법                           | 아래 Next.js 블록 → `node_modules/next/dist/docs/` 해당 가이드 | —                                                                                           | —                                                                                                                                                                           |
 
 ## 탐색 범위를 넓히는 규칙
 
