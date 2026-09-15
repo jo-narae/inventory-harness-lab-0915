@@ -40,6 +40,9 @@ npm run seed:reset   # DB 파일을 지우고 처음부터 (시연 중 초기화
 npm run db:studio    # 브라우저로 DB 테이블 열기 (localhost:5555)
 npm test             # 자동 테스트
 npm run build        # 프로덕션 빌드
+npm run arch         # 아키텍처 경로 규칙 검사 (06-architecture · SSOT §2)
+npm run verify       # 준비 → 타입 → 린트 → 아키텍처 → 테스트 → 빌드 (하나라도 실패하면 멈춤)
+                     # 준비: 검증 전용 prisma/verify.db를 매번 새로 시드한다 (dev.db는 그대로)
 ```
 
 > `seed:reset`을 해도 사용자·상품 ID가 1번부터 다시 부여되므로,

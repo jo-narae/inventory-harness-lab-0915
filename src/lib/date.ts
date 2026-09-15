@@ -22,6 +22,11 @@ export function daysUntil(target: Date): number {
   return Math.round((dateOnly(target).getTime() - today().getTime()) / MS)
 }
 
+/** 그때부터 지금까지 지난 일수 (발송 후 경과일 등) */
+export function daysAgo(from: Date): number {
+  return Math.floor((Date.now() - from.getTime()) / 86_400_000)
+}
+
 /** 2026-11-30 형식 */
 export function formatDate(d: Date): string {
   return dateOnly(d).toISOString().slice(0, 10)
