@@ -2,11 +2,9 @@ import Link from 'next/link'
 import { db } from '@/lib/db'
 import { Badge } from '@/components/StatusBadge'
 import { TRANSFER_STATUS, TRANSIT_DELAY_DAYS } from '@/lib/constants'
-import { formatDate } from '@/lib/date'
+import { daysAgo, formatDate } from '@/lib/date'
 
 export const dynamic = 'force-dynamic'
-
-const daysAgo = (d: Date) => Math.floor((Date.now() - d.getTime()) / 86_400_000)
 
 export default async function TransfersPage() {
   const [sent, received] = await Promise.all([

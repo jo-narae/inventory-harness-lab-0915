@@ -9,7 +9,7 @@ import { ProductPicker, type PickProduct } from './ProductPicker'
 import { Qty } from './Qty'
 import { sendTransfer } from '@/actions/transfer'
 import { ALLOCATION, ALLOCATION_REASON, planAllocation } from '@/lib/fefo'
-import { formatDate } from '@/lib/date'
+import { daysUntil, formatDate } from '@/lib/date'
 import type { OutLot } from './OutboundForm'
 
 /** 풀필먼트 발송 (S3) — 여러 SKU를 담아 한 곳으로 보낸다 */
@@ -96,10 +96,7 @@ export function TransferForm({
                 <b className="mb-1 block text-[10.5px] text-sub">보낼 로트 — 유통기한 늦은 순</b>
                 {previewOf(current.id, Number(qty)).map((a) => {
                   const lot = lots.find((l) => l.id === a.lotId)!
-                  const days = Math.round(
-                    (new Date(a.expiryDate).getTime() - Date.now()) / 86_400_000
-                  )
-                  const risky = days <= lot.alertDays
+                  const risky = daysUntil(new Date(a.expiryDate)) <= lot.alertDays
                   return (
                     <p key={a.lotId} className={`tnum ${risky ? 'font-bold text-amber' : ''}`}>
                       {formatDate(new Date(a.expiryDate))} · {a.qty}{current.unit}

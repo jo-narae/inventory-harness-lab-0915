@@ -5,7 +5,7 @@ import { ReceiveForm } from '@/components/ReceiveForm'
 import { Badge } from '@/components/StatusBadge'
 import { Qty } from '@/components/Qty'
 import { TRANSFER_STATUS, TRANSIT_DELAY_DAYS } from '@/lib/constants'
-import { formatDate } from '@/lib/date'
+import { daysAgo, formatDate } from '@/lib/date'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,7 +23,7 @@ export default async function TransferDetailPage({ params }: { params: Promise<{
   })
   if (!transfer) notFound()
 
-  const days = Math.floor((Date.now() - transfer.sentAt.getTime()) / 86_400_000)
+  const days = daysAgo(transfer.sentAt)
   const delayed = days >= TRANSIT_DELAY_DAYS && transfer.status === TRANSFER_STATUS.SENT
   const qty = transfer.lines.reduce((s, l) => s + l.sentQty, 0)
 
