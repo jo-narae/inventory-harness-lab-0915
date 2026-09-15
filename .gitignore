@@ -54,10 +54,6 @@ src/generated
 # typescript
 *.tsbuildinfo
 
-# Next.js 가 자동 생성하는 에이전트 규칙 파일 (이 프로젝트에서는 쓰지 않음)
-AGENTS.md
-CLAUDE.md
-
 # 작업 산출물
 .playwright-mcp/
 
