@@ -1,7 +1,7 @@
 import type { Prisma } from '@/generated/prisma/client'
 import { db } from './db'
 import { applyMovement, reverseMovement } from './stock'
-import { MOVEMENT_TYPES, POPUP_STATUS, REASON_CODES } from './constants'
+import { LOCATION_TYPES, MOVEMENT_TYPES, POPUP_STATUS, REASON_CODES } from './constants'
 import { dateOnly } from './date'
 
 /**
@@ -43,6 +43,45 @@ export function tallyPopup(movements: MovementLike[], popupLocationId: number): 
     sample: sum((m) => m.fromLocationId === popupLocationId && m.reason === REASON_CODES.SAMPLE),
     returned: sum((m) => m.type === MOVEMENT_TYPES.POPUP_IN),
   }
+}
+
+// ───────────────────────── 반출서 만들기 (S6)
+
+export type CreatePopupInput = {
+  name: string
+  startDate: Date
+  endDate: Date
+  sourceLocationId: number
+  planLines: { productId: number; plannedQty: number }[]
+}
+
+/**
+ * 반출서 만들기 — 액션과 테스트가 같은 함수를 쓴다.
+ *
+ * 반출서는 계획이다. 여기서 재고는 1개도 움직이지 않으므로 예정 수량이
+ * 지금 창고의 가용 재고보다 커도 그대로 저장한다. 실제 수량은 반출할 때 다시 확인한다.
+ * 화면에 가용 재고를 보여주는 것은 판단을 돕기 위한 안내일 뿐, 입력을 막는 규칙이 아니다.
+ */
+export async function createPopupTx(tx: Prisma.TransactionClient, input: CreatePopupInput) {
+  const location = await tx.location.create({
+    data: { name: input.name, type: LOCATION_TYPES.POPUP },
+  })
+  const popup = await tx.popup.create({
+    data: {
+      name: input.name,
+      status: POPUP_STATUS.PREP,
+      startDate: input.startDate,
+      endDate: input.endDate,
+      locationId: location.id,
+      sourceLocationId: input.sourceLocationId,
+    },
+  })
+  for (const line of input.planLines.filter((l) => l.plannedQty > 0)) {
+    await tx.popupPlan.create({
+      data: { popupId: popup.id, productId: line.productId, plannedQty: line.plannedQty },
+    })
+  }
+  return popup.id
 }
 
 // ───────────────────────── 조회

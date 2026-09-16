@@ -8,6 +8,7 @@ import { ProductPicker, type PickProduct } from './ProductPicker'
 import { PickerRow } from './PickerRow'
 import { Qty } from './Qty'
 import { createPopup } from '@/actions/popup'
+import type { SourceStockMap } from '@/lib/inventory'
 
 /**
  * 팝업 만들기 + 반출서 (S6) — P2(영업)가 행사 며칠 전에 쓰는 화면.
@@ -16,10 +17,13 @@ import { createPopup } from '@/actions/popup'
 export function PopupCreateForm({
   products,
   sources,
+  sourceStock,
   today,
 }: {
   products: PickProduct[]
   sources: { id: number; name: string }[]
+  /** 가져가는 곳 × 상품 → 지금 출고 가능한 수량 (안내용) */
+  sourceStock: SourceStockMap
   today: string // YYYY-MM-DD
 }) {
   const router = useRouter()
@@ -33,6 +37,12 @@ export function PopupCreateForm({
   const [qty, setQty] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
+
+  /**
+   * 지금 그 창고에서 출고 가능한 수량. 반출서는 계획이므로 이 숫자를 넘겨도 담을 수 있다 —
+   * 막기 위한 값이 아니라, 실제와 크게 어긋난 계획을 쓰지 않도록 보여주는 값이다.
+   */
+  const availableOf = (productId: number) => sourceStock[Number(sourceId)]?.[productId] ?? 0
 
   const submit = async () => {
     setPending(true)
@@ -65,9 +75,23 @@ export function PopupCreateForm({
             <div className="mx-4 mt-3 rounded-xl border border-acc-line bg-acc-soft px-3.5 py-2.5 text-[13px] font-bold text-acc">
               🦴 {current.name}
             </div>
+            <div className="mx-4 mt-2 flex items-center justify-between rounded-xl bg-dim px-3.5 py-2.5">
+              <span className="text-[11.5px] text-[#5b5570]">
+                {sources.find((s) => String(s.id) === sourceId)?.name ?? '가져가는 곳'} 가용 재고
+              </span>
+              <span className="text-[13px] font-extrabold tnum">
+                {availableOf(current.id).toLocaleString()}
+                {current.unit}
+              </span>
+            </div>
             <div className="mx-4 mt-3">
               <label className="mb-1 block text-[10.5px] text-sub">가져갈 예정 수량</label>
               <QtyInput autoFocus value={qty} onChange={setQty} unit={current.unit} />
+              {Number(qty) > availableOf(current.id) && (
+                <p className="mt-1.5 text-[11.5px] font-bold text-amber">
+                  가용 재고보다 많습니다. 반출서는 계획이므로 이대로 담을 수 있습니다
+                </p>
+              )}
             </div>
             <div className="fixed inset-x-0 bottom-0 mx-auto max-w-[560px] border-t border-line bg-white p-3 lg:max-w-[960px]">
               <button
@@ -149,7 +173,13 @@ export function PopupCreateForm({
       ) : (
         lines.map((l, i) => (
           <div key={i} className="flex items-center justify-between border-b border-line px-4 py-3">
-            <p className="text-[13px] font-bold">{l.product.name}</p>
+            <div className="min-w-0">
+              <p className="text-[13px] font-bold">{l.product.name}</p>
+              <p className="text-[10.5px] text-sub tnum">
+                가용 {availableOf(l.product.id).toLocaleString()}
+                {l.product.unit}
+              </p>
+            </div>
             <div className="flex items-center gap-3">
               <Qty value={l.qty} unit={l.product.unit} size="md" />
               <button
