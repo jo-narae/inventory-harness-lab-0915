@@ -20,7 +20,7 @@ export default async function ProductPage({
   const data = await getProductDetail(Number(id))
   if (!data) notFound()
 
-  const { product, available, lotCards, locationCards, excluded } = data
+  const { product, readyToShip, available, total, lotCards, locationCards, excluded } = data
   const byLocation = view === 'location'
 
   return (
@@ -32,12 +32,30 @@ export default async function ProductPage({
         <span className="text-[11px] text-sub">{product.sku}</span>
       </header>
 
+      {/* 세 수량은 범위가 다르다 — 모두 유통기한이 지난 재고는 뺀 값이다 (Issue #8) */}
       <section className="px-4 pb-1 pt-4">
-        <p className="text-[11.5px] text-sub">지금 출고 가능</p>
+        <p className="text-[11.5px] text-sub">즉시 출고 가능 · 자사창고</p>
         <p className="text-[40px] font-extrabold leading-tight tracking-[-0.035em] text-acc tnum">
-          {available}
+          {readyToShip.toLocaleString()}
           <span className="ml-1 text-[13px] font-bold text-sub">{product.unit}</span>
         </p>
+        <dl className="mt-2 grid grid-cols-2 gap-2">
+          <div className="rounded-xl border border-line px-3 py-2">
+            <dt className="text-[11px] text-sub">가용 재고</dt>
+            <dd>
+              <Qty value={available} unit={product.unit} size="lg" />
+              <p className="mt-[2px] text-[10px] text-sub">자사창고 + 풀필먼트</p>
+            </dd>
+          </div>
+          <div className="rounded-xl border border-line px-3 py-2">
+            <dt className="text-[11px] text-sub">전체 재고</dt>
+            <dd>
+              <Qty value={total} unit={product.unit} size="lg" />
+              <p className="mt-[2px] text-[10px] text-sub">가용 + 팝업</p>
+            </dd>
+          </div>
+        </dl>
+        <p className="mt-1.5 text-[10.5px] text-sub">유통기한이 지난 재고는 세 수량 모두에서 뺍니다</p>
       </section>
 
       <nav className="flex gap-1.5 px-4 pt-2">
