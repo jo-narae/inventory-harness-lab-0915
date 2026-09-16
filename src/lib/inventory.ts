@@ -334,3 +334,36 @@ export async function getFulfillmentSheet(locationId: number) {
   )
   return { location, rows }
 }
+
+// ───────────────────────── 팝업 반출서 (S6)
+
+/** 가져가는 곳 × 상품 → 지금 출고 가능한 수량 */
+export type SourceStockMap = Record<number, Record<number, number>>
+
+/**
+ * 반출서 작성 화면용 — 가져가는 곳별·상품별 현재 가용 재고.
+ *
+ * 반출서는 계획이라 재고를 움직이지 않지만, 지금 창고에 무엇이 얼마나 있는지 모르면
+ * 실제와 크게 어긋난 계획을 쓰게 된다. 숫자를 보여줄 뿐 수량을 막지는 않는다.
+ * 기준은 재고 목록·상품 상세와 같다 — 배송 중·팝업 거점은 가용에서 빠진다.
+ */
+export async function getPopupSourceStock(locationIds: number[]): Promise<SourceStockMap> {
+  if (locationIds.length === 0) return {}
+
+  const lots = await db.lot.findMany({
+    where: {
+      locationId: { in: locationIds },
+      quantity: { gt: 0 },
+      location: { type: { in: [...AVAILABLE_LOCATION_TYPES] } },
+    },
+    select: { locationId: true, productId: true, quantity: true },
+  })
+
+  const map: SourceStockMap = {}
+  for (const id of locationIds) map[id] = {}
+  for (const lot of lots) {
+    const byProduct = (map[lot.locationId] ??= {})
+    byProduct[lot.productId] = (byProduct[lot.productId] ?? 0) + lot.quantity
+  }
+  return map
+}
